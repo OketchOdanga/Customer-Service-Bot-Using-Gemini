@@ -16,6 +16,20 @@ genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
 
+
+# Simulated internal contact directory
+department_contacts = {
+    "Logistics": {"name": "James Odhiambo", "email": "logistics@company.com"},
+    "Billing": {"name": "Sarah Wambui", "email": "billing@company.com"},
+    "HR": {"name": "Faith Chebet", "email": "hr@company.com"},
+    "IT Support": {"name": "Kevin Otieno", "email": "itsupport@company.com"},
+    "Customer Service": {"name": "Nancy Muthoni", "email": "support@company.com"},
+    "Management": {"name": "Daniel Mwangi", "email": "management@company.com"},
+}
+
+
+
+
 def classify_department(message):
     prompt = f"""
 You are a smart customer service assistant. Your job is to analyze a customer's complaint or request and assign it to the most relevant department.
