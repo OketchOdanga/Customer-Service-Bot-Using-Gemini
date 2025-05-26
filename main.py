@@ -28,8 +28,6 @@ department_contacts = {
 }
 
 
-
-
 def classify_department(message):
     prompt = f"""
 You are a smart customer service assistant. Your job is to analyze a customer's complaint or request and assign it to the most relevant department.
@@ -73,6 +71,16 @@ Customer message: "{message}"
 
     # Fallback if unclear or unmatched
     return "Customer Service"
+
+#Alert Simulation Function
+def simulate_alert(department, message):
+    contact = department_contacts.get(department, {"name": "Unknown", "email": "unknown@company.com"})
+    print("\n" + "=" * 50)
+    print(f"[ALERT] Request routed to {department} Department.")
+    print(f"Assigned to: {contact['name']} ({contact['email']})")
+    print(f"Message: {message}")
+    print("=" * 50 + "\n")
+
 
 demo = gr.Interface(fn=classify_department, 
                     inputs="text", 
