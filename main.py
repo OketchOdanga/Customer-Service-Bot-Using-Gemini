@@ -3,7 +3,7 @@ import gradio as gr
 import os
 from dotenv import load_dotenv
 from email_utils import send_email_alert
-
+from customer_ack import send_customer_acknowledgment
 # Load environment variables from .env file
 load_dotenv()
 
@@ -91,8 +91,10 @@ def simulate_alert(department, user_message, user_email):
         print(f"Message: {user_message}")
         print(f"Customer Email: {user_email}")
         
-        # Send email
+        # Send email to department
         send_email_alert(email, department, user_message, user_email)
+        # Send acknowledgment to customer
+        send_customer_acknowledgment(user_email, department)
     else:
         print(f"[ALERT] Department '{department}' not recognized.")
 
