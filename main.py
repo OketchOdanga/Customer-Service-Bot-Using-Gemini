@@ -87,11 +87,14 @@ def handle_user_request(user_message):
     simulate_alert(department, user_message)  # Simulate the alert
     return f"Request routed to: {department}"
 
-demo = gr.Interface(fn=classify_department, 
-                    inputs="text", 
-                    outputs="text",
-                    title="Customer Service Bot",
-                    description="Enter a customer complaint to get the relevant department.")
+# Gradio interface
+iface = gr.Interface(
+    fn=handle_user_request,
+    inputs=gr.Textbox(label="Enter your complaint or request"),
+    outputs=gr.Markdown(label="Routing Result"),
+    title="AI Customer Service Agent"
+)
 
-demo.launch(share=True)
+if __name__ == "__main__":
+    iface.launch(share=True)
 
