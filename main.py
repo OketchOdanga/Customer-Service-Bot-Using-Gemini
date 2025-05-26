@@ -2,6 +2,7 @@ import google.generativeai as genai
 import gradio as gr
 import os
 from dotenv import load_dotenv
+from email_utils import send_email_alert
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,8 +20,8 @@ model = genai.GenerativeModel("gemini-2.5-flash-preview-05-20")
 
 # Simulated internal contact directory
 department_contacts = {
-    "Logistics": {"name": "James Odhiambo", "email": "logistics@company.com"},
-    "Billing": {"name": "Sarah Wambui", "email": "billing@company.com"},
+    "Logistics": {"name": "James Odhiambo", "email": "odanga.oketch@gmail.com"},
+    "Billing": {"name": "Sarah Wambui", "email": "odanga.oketch@students.jkuat.ac.ke"},
     "HR": {"name": "Faith Chebet", "email": "hr@company.com"},
     "IT Support": {"name": "Kevin Otieno", "email": "itsupport@company.com"},
     "Customer Service": {"name": "Nancy Muthoni", "email": "support@company.com"},
@@ -28,7 +29,7 @@ department_contacts = {
 }
 
 
-def classify_department(message):
+def classify_department(user_message, user_email):
     prompt = f"""
 You are a smart customer service assistant. Your job is to analyze a customer's complaint or request and assign it to the most relevant department.
 
@@ -46,7 +47,7 @@ Organizational Units (Departments):
 Based on the customer's message below, assign it to the most relevant department.
 ONLY return the name of the department.
 
-Customer message: "{message}"
+Customer message: "{user_message}"
 """
 
     response = model.generate_content(prompt)
@@ -72,28 +73,52 @@ Customer message: "{message}"
     # Fallback if unclear or unmatched
     return "Customer Service"
 
-#Alert Simulation Function
+""" #Alert Simulation Function
 def simulate_alert(department, message):
     contact = department_contacts.get(department, {"name": "Unknown", "email": "unknown@company.com"})
     print("\n" + "=" * 50)
     print(f"[ALERT] Request routed to {department} Department.")
     print(f"Assigned to: {contact['name']} ({contact['email']})")
     print(f"Message: {message}")
-    print("=" * 50 + "\n")
+    print("=" * 50 + "\n") """
+
+def simulate_alert(department, user_message, user_email):
+    contact = department_contacts.get(department)
+    if contact:
+        name = contact["name"]
+        email = contact["email"]
+        print(f"[ALERT] Routed to {department}: {name} ({email})")
+        print(f"Message: {user_message}")
+        print(f"Customer Email: {user_email}")
+        
+        # Send email
+        send_email_alert(email, department, user_message, user_email)
+    else:
+        print(f"[ALERT] Department '{department}' not recognized.")
+
 
 #Trigger the Alert After Classification
-def handle_user_request(user_message):
-    department = classify_department(user_message)
-    simulate_alert(department, user_message)  # Simulate the alert
-    return f"Request routed to: {department}"
+def handle_user_request(user_message, user_email):
+    department = classify_department(user_message, user_email)
+    simulate_alert(department, user_message, user_email)
+    return (
+    f"✅ Your request has been forwarded to the **{department}** department.\n\n"
+    f"📨 A confirmation email has been sent to **{user_email}**. Our team will get back to you shortly."
+)
+
+
 
 # Gradio interface
 iface = gr.Interface(
     fn=handle_user_request,
-    inputs=gr.Textbox(label="Enter your complaint or request"),
+    inputs=[
+        gr.Textbox(label="Enter your complaint or request"),
+        gr.Textbox(label="Enter your email address")
+    ],
     outputs=gr.Markdown(label="Routing Result"),
     title="AI Customer Service Agent"
 )
+
 
 if __name__ == "__main__":
     iface.launch(share=True)
