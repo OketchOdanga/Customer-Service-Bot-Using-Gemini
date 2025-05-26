@@ -81,6 +81,11 @@ def simulate_alert(department, message):
     print(f"Message: {message}")
     print("=" * 50 + "\n")
 
+#Trigger the Alert After Classification
+def handle_user_request(user_message):
+    department = classify_department(user_message)
+    simulate_alert(department, user_message)  # Simulate the alert
+    return f"Request routed to: {department}"
 
 demo = gr.Interface(fn=classify_department, 
                     inputs="text", 
