@@ -4,6 +4,9 @@ import os
 from dotenv import load_dotenv
 from email_utils import send_email_alert
 from customer_ack import send_customer_acknowledgment
+from db_utils import init_db, log_request
+# Initialize the database
+init_db()
 # Load environment variables from .env file
 load_dotenv()
 
@@ -103,6 +106,7 @@ def simulate_alert(department, user_message, user_email):
 def handle_user_request(user_message, user_email):
     department = classify_department(user_message, user_email)
     simulate_alert(department, user_message, user_email)
+    log_request(user_message, user_email, department)
     return (
     f"✅ Your request has been forwarded to the **{department}** department.\n\n"
     f"📨 A confirmation email has been sent to **{user_email}**. Our team will get back to you shortly."
