@@ -2,6 +2,13 @@ from flask import request
 from flask import Flask, jsonify
 import sqlite3
 from scheduler import start_scheduler
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+API_SECRET_KEY = os.getenv("API_SECRET_KEY")
 
 app = Flask(__name__)
 
@@ -68,20 +75,25 @@ def update_response(req_id):
     return jsonify({"message": "Response and status updated successfully."}), 200
 
 @app.route("/api/submit", methods=["POST"])
-def submit_external_request():
+def submit_request():
+    api_key = request.headers.get("x-api-key")
+
+    if api_key != API_SECRET_KEY:
+        return jsonify({"error": "Unauthorized"}), 403
+
     data = request.get_json()
+    message = data.get("message")
+    email = data.get("email")
+    department = data.get("department")
 
     # Validate fields
-    required_fields = ["message", "email", "department"]
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"error": f"Missing field: {field}"}), 400
+    if not all([message, email, department]):
+        return jsonify({"error": "Missing fields"}), 400
 
-    # Echo back for now
-    return jsonify({
-        "message": "Request received.",
-        "data": data
-    }), 200
+    # Log to DB, send email, etc.
+    # log_request(...) ← your existing logging function
+
+    return jsonify({"message": "Request submitted successfully."}), 201
 
 if __name__ == "__main__":
     start_scheduler()
