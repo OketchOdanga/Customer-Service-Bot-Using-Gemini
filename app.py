@@ -67,6 +67,22 @@ def update_response(req_id):
 
     return jsonify({"message": "Response and status updated successfully."}), 200
 
+@app.route("/api/submit", methods=["POST"])
+def submit_external_request():
+    data = request.get_json()
+
+    # Validate fields
+    required_fields = ["message", "email", "department"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+
+    # Echo back for now
+    return jsonify({
+        "message": "Request received.",
+        "data": data
+    }), 200
+
 if __name__ == "__main__":
     start_scheduler()
     app.run(debug=True)
