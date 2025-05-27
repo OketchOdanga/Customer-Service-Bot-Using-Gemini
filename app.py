@@ -1,6 +1,7 @@
 from flask import request
 from flask import Flask, jsonify
 import sqlite3
+from scheduler import start_scheduler
 
 app = Flask(__name__)
 
@@ -67,4 +68,5 @@ def update_response(req_id):
     return jsonify({"message": "Response and status updated successfully."}), 200
 
 if __name__ == "__main__":
+    start_scheduler()
     app.run(debug=True)
