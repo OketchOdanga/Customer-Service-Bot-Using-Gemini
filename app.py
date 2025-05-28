@@ -5,7 +5,7 @@ from scheduler import start_scheduler
 from dotenv import load_dotenv
 import os
 from flask_cors import CORS
-
+from core_logic import handle_user_request
 # Load environment variables
 load_dotenv()
 
@@ -86,16 +86,14 @@ def submit_request():
     data = request.get_json()
     message = data.get("message")
     email = data.get("email")
-    department = data.get("department")
 
     # Validate fields
-    if not all([message, email, department]):
+    if not all([message, email]):
         return jsonify({"error": "Missing fields"}), 400
 
-    # Log to DB, send email, etc.
-    # log_request(...) ← your existing logging function
+    response_message = handle_user_request(message, email)
 
-    return jsonify({"message": "Request submitted successfully."}), 201
+    return jsonify({"message": response_message}), 201
 
 if __name__ == "__main__":
     start_scheduler()
