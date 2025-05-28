@@ -4,6 +4,7 @@ import sqlite3
 from scheduler import start_scheduler
 from dotenv import load_dotenv
 import os
+from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
@@ -11,6 +12,7 @@ load_dotenv()
 API_SECRET_KEY = os.getenv("API_SECRET_KEY")
 
 app = Flask(__name__)
+CORS(app)
 
 DB_NAME = "requests.db"
 
